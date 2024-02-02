@@ -1,0 +1,47 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_URL}:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+
+host:
+  url: ${HOST_URL}
+#  cloud:
+#    openfeign:
+#      client:
+#        config:
+#          feignName:
+##            url: http://remote-service.com
+##            connectTimeout: 5000
+##            readTimeout: 5000
+##            loggerLevel: full
+##            errorDecoder: com.example.SimpleErrorDecoder
+##            retryer: com.example.SimpleRetryer
+##            defaultQueryParameters:
+##              query: queryValue
+#            defaultRequestHeaders:
+#              service: ecomm-cart
+##            requestInterceptors:
+##              - com.example.FooRequestInterceptor
+##              - com.example.BarRequestInterceptor
+##            responseInterceptor: com.example.BazResponseInterceptor
+##            dismiss404: false
+##            encoder: com.example.SimpleEncoder
+##            decoder: com.example.SimpleDecoder
+##            contract: com.example.SimpleContract
+##            capabilities:
+##              - com.example.FooCapability
+##              - com.example.BarCapability
+##            queryMapEncoder: com.example.SimpleQueryMapEncoder
+##            micrometer.enabled: false
+
+logging:
+  level:
+    root: info

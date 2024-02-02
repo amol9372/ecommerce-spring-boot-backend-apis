@@ -1,0 +1,13 @@
+version: 0.0
+os: linux
+files:
+  - source: ./
+    destination: /home/ec2-user/ecomm-cart-images
+file_exists_behavior: OVERWRITE
+
+hooks:
+
+  ApplicationStart:
+    - location: start_container.sh
+      timeout: 20
+      runas: ec2-user
