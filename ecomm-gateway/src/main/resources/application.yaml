@@ -1,0 +1,57 @@
+server:
+  port: 8091
+
+management:
+  endpoint:
+    gateway:
+      enabled: true
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: ecomm-user
+          uri: http://172.17.0.1:8080/
+          predicates:
+            - Path=/user/**, /address/**
+          filters:
+            - PrefixPath=/api
+        - id: ecomm-product
+          uri: http://172.17.0.1:8081/
+          predicates:
+            - Path=/product/**, /category/**, /admin/**
+          filters:
+            - PrefixPath=/api
+        - id: ecomm-cart
+          uri: http://172.17.0.1:8082/
+          predicates:
+            - Path=/cart/**
+          filters:
+            - PrefixPath=/api
+        - id: ecomm-order
+          uri: http://172.17.0.1:8083/
+          predicates:
+            - Path=/order/**, /stripe/**
+          filters:
+            - PrefixPath=/api
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_URL}:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: debug
+
+auth0:
+  userinfo:
+    url: ${AUTH0_USERINFO_URL}
+  issuer: ${AUTH0_ISSUER}
+
+jwt:
+  secret-key: 436d58303377335967726d3537344a74747877314e7a4337684b6f6e72707149
