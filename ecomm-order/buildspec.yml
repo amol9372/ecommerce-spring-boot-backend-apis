@@ -1,0 +1,40 @@
+version: 0.2
+
+env:
+  parameter-store:
+    DOCKER_USER: "/CodeBuild/applications/expense-tracker-app/docker/user"
+    DOCKER_PASSWORD: "/CodeBuild/applications/expense-tracker-app/docker/password"
+
+phases:
+  install:
+    commands:
+      - echo "Copying settings.xml from S3"
+      - aws s3 cp s3://budgetapp-configuration/maven/settings.xml /root/.m2/
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR....
+      - aws --version
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/j8h8n1c1
+  build:
+    commands:
+      - echo Running maven package
+      - mvn clean install -Dmaven.test.skip
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - docker build -t ecomm-order:latest .
+      - docker tag ecomm-order:latest public.ecr.aws/j8h8n1c1/ecomm-order:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push public.ecr.aws/j8h8n1c1/ecomm-order:latest
+cache:
+  paths:
+    - '/root/.m2/**/*'
+artifacts:
+  files:
+    - appspec.yml
+    - scripts/start_container.sh
+  discard-paths : yes
+  # base-directory : docker_build

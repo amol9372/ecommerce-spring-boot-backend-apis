@@ -1,0 +1,18 @@
+server:
+  port: 8083
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_URL}:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+logging:
+  level:
+    root: info
+
+host:
+  url: ${HOST_URL}
