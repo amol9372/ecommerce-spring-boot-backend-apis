@@ -1,0 +1,108 @@
+{
+  "productv1": {
+    "mappings": {
+      "properties": {
+        "_class": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "category": {
+          "properties": {
+            "_class": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "id": {
+              "type": "long"
+            },
+            "name": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "parentId": {
+              "type": "long"
+            }
+          }
+        },
+        "categoryTree": {
+          "type": "text"
+        },
+        "createdOn": {
+          "type": "date"
+        },
+        "deatures": {
+          "type": "long"
+        },
+        "description": {
+          "type": "text"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "images": {
+          "type": "object"
+        },
+        "inventory": {
+          "properties": {
+            "_class": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "id": {
+              "type": "long"
+            },
+            "quantityAvailable": {
+              "type": "long"
+            },
+            "quantityReserved": {
+              "type": "long"
+            },
+            "quantitySold": {
+              "type": "long"
+            },
+            "sku": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        },
+        "name": {
+          "type": "text",
+          "analyzer": "autocomplete",
+          "search_analyzer": "standard"
+        },
+        "price": {
+          "type": "double"
+        },
+        "updatedOn": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}

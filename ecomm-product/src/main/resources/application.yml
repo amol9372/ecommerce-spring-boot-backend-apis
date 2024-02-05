@@ -1,0 +1,24 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_URL}:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URL}
+    password: ${ELASTICSEARCH_PASSWORD}
+    username: elastic
+    connection-timeout: 5s
+
+logging:
+  level:
+    root: info
+
+host:
+  url: ${HOST_URL}

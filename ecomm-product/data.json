@@ -1,0 +1,252 @@
+{
+  "took": 3,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 7,
+      "relation": "eq"
+    },
+    "max_score": 1.0,
+    "hits": [
+      {
+        "_index": "productv1",
+        "_id": "7",
+        "_score": 1.0,
+        "_source": {
+          "_class": "org.ecomm.ecommproduct.rest.model.elasticsearch.ESProduct",
+          "id": 7,
+          "name": "Product Zero",
+          "description": "Chief",
+          "price": 2399.99,
+          "category": {
+            "_class": "org.ecomm.ecommproduct.persistance.entity.ECategory",
+            "name": "Laptops",
+            "parentId": 2,
+            "id": 8
+          },
+          "features": {
+            "Brand": "apple",
+            "Model name": "MacBook Pro",
+            "Screen size": 16,
+            "Color": "Silver",
+            "Hard Drive": "32GB eMMC",
+            "RAM installed": 16,
+            "Operating system": "Chrome OS",
+            "Graphics card description": "Integrated",
+            "Graphics coprocessor": "Intel UHD Graphics 600",
+            "Chipset brand": "AMD",
+            "Graphics Memory Size": 4,
+            "Wireless Standard": "Bluetooth, 801.11ac",
+            "USB 3.0 Ports": 1,
+            "Average Battery Life (in hours)": 12.5,
+            "Item model number": "NX.HPVAA.001",
+            "Number of Processors": 2,
+            "Memory Type": "DDR4 SDRAM",
+            "Voltage": "24 Volts",
+            "Batteries": "1 Lithium Ion batteries required. (included)"
+          }
+        }
+      },
+      {
+        "_index": "productv1",
+        "_id": "8",
+        "_score": 1.0,
+        "_source": {
+          "_class": "org.ecomm.ecommproduct.rest.model.elasticsearch.ESProduct",
+          "id": 8,
+          "name": "HP Pavilion 15 Laptop - 12th Gen Intel Core i7-1255U",
+          "description": "Sleek, portable design with powerful performance for productivity and entertainment.",
+          "price": 799.99,
+          "category": {
+            "_class": "org.ecomm.ecommproduct.persistance.entity.ECategory",
+            "name": "Laptops",
+            "parentId": 2,
+            "id": 8
+          },
+          "features": {
+            "Brand": "HP",
+            "Model name": "Pavilion 15",
+            "Screen size": 15.6,
+            "Color": "Silver",
+            "Hard Drive": "512GB SSD",
+            "RAM installed": 16,
+            "Operating system": "Windows 11 Home",
+            "Graphics card description": "Intel Iris Xe Graphics",
+            "Number of Processors": 1,
+            "Memory Type": "DDR4 SDRAM",
+            "Average Battery Life (in hours)": 8
+          }
+        }
+      },
+      {
+        "_index": "productv1",
+        "_id": "9",
+        "_score": 1.0,
+        "_source": {
+          "_class": "org.ecomm.ecommproduct.rest.model.elasticsearch.ESProduct",
+          "id": 9,
+          "name": "Dell Inspiron 15 5515 Laptop - AMD Ryzen 5 5500U",
+          "description": "Reliable performance and long battery life for everyday tasks.",
+          "price": 599.99,
+          "category": {
+            "_class": "org.ecomm.ecommproduct.persistance.entity.ECategory",
+            "name": "Laptops",
+            "parentId": 2,
+            "id": 8
+          },
+          "features": {
+            "Brand": "Dell",
+            "Model name": "Inspiron 15 5515",
+            "Screen size": 15.6,
+            "Color": "Black",
+            "Hard Drive": "256GB SSD",
+            "RAM installed": 8,
+            "Operating system": "Windows 11 Home",
+            "Graphics card description": "AMD Radeon Graphics",
+            "Number of Processors": 1,
+            "Memory Type": "DDR4 SDRAM",
+            "Average Battery Life (in hours)": 7
+          }
+        }
+      },
+      {
+        "_index": "productv1",
+        "_id": "10",
+        "_score": 1.0,
+        "_source": {
+          "_class": "org.ecomm.ecommproduct.rest.model.elasticsearch.ESProduct",
+          "id": 10,
+          "name": "ASUS ZenBook 14 UX425EA-EH51 - Intel Core i5-1135G7",
+          "description": "Thin and lightweight with a stunning display and long battery life.",
+          "price": 899.99,
+          "category": {
+            "_class": "org.ecomm.ecommproduct.persistance.entity.ECategory",
+            "name": "Laptops",
+            "parentId": 2,
+            "id": 8
+          },
+          "features": {
+            "Brand": "ASUS",
+            "Model name": "ZenBook 14 UX425EA-EH51",
+            "Screen size": 14,
+            "Color": "Pine Grey",
+            "Hard Drive": "512GB SSD",
+            "RAM installed": 8,
+            "Operating system": "Windows 11 Pro",
+            "Graphics card description": "Intel Iris Xe Graphics",
+            "Number of Processors": 1,
+            "Memory Type": "LPDDR4X",
+            "Average Battery Life (in hours)": 12
+          }
+        }
+      },
+      {
+        "_index": "productv1",
+        "_id": "11",
+        "_score": 1.0,
+        "_source": {
+          "_class": "org.ecomm.ecommproduct.rest.model.elasticsearch.ESProduct",
+          "id": 11,
+          "name": "Lenovo IdeaPad 5i Pro 16 Laptop - 12th Gen Intel Core i7-12650H",
+          "description": "Powerful performance with a large, high-resolution display for content creation and gaming.",
+          "price": 1299.99,
+          "category": {
+            "_class": "org.ecomm.ecommproduct.persistance.entity.ECategory",
+            "name": "Laptops",
+            "parentId": 2,
+            "id": 8
+          },
+          "features": {
+            "Brand": "Lenovo",
+            "Model name": "IdeaPad 5i Pro 16",
+            "Screen size": 16,
+            "Color": "Storm Grey",
+            "Hard Drive": "1TB SSD",
+            "RAM installed": 16,
+            "Operating system": "Windows 11 Home",
+            "Graphics card description": "NVIDIA GeForce GTX 1650",
+            "Number of Processors": 1,
+            "Memory Type": "DDR4 SDRAM",
+            "Average Battery Life (in hours)": 6
+          }
+        }
+      },
+      {
+        "_index": "productv1",
+        "_id": "12",
+        "_score": 1.0,
+        "_source": {
+          "_class": "org.ecomm.ecommproduct.rest.model.elasticsearch.ESProduct",
+          "id": 12,
+          "name": "Acer Aspire 5 A515-56-50RS Laptop - 11th Gen Intel Core i5-1135G7",
+          "description": "Great value for everyday computing with a comfortable keyboard and long battery life.",
+          "price": 549.99,
+          "category": {
+            "_class": "org.ecomm.ecommproduct.persistance.entity.ECategory",
+            "name": "Laptops",
+            "parentId": 2,
+            "id": 8
+          },
+          "features": {
+            "Brand": "Acer",
+            "Model name": "Aspire 5 A515-56-50RS",
+            "Screen size": 15.6,
+            "Color": "Silver",
+            "Hard Drive": "256GB SSD",
+            "RAM installed": 8,
+            "Operating system": "Windows 11 Home",
+            "Graphics card description": "Intel Iris Xe Graphics",
+            "Number of Processors": 1,
+            "Memory Type": "DDR4 SDRAM",
+            "Average Battery Life (in hours)": 8
+          }
+        }
+      },
+      {
+        "_index": "productv1",
+        "_id": "13",
+        "_score": 1.0,
+        "_source": {
+          "_class": "org.ecomm.ecommproduct.rest.model.elasticsearch.ESProduct",
+          "id": 13,
+          "name": "Dell XPS 13 Ultrabook",
+          "description": "Powerful and compact ultrabook for professionals",
+          "price": 1499.99,
+          "category": {
+            "_class": "org.ecomm.ecommproduct.persistance.entity.ECategory",
+            "name": "Laptops",
+            "parentId": 2,
+            "id": 8
+          },
+          "features": {
+            "Brand": "Dell",
+            "Model name": "XPS 13",
+            "Screen size": 13.3,
+            "Color": "Rose Gold",
+            "Hard Drive": "512GB SSD",
+            "RAM installed": 16,
+            "Operating system": "Windows 10",
+            "Graphics card description": "Intel Iris Xe Graphics",
+            "Graphics coprocessor": "Intel Core i7",
+            "Chipset brand": "Intel",
+            "Graphics Memory Size": 2,
+            "Wireless Standard": "Bluetooth, 802.11ax",
+            "USB 3.0 Ports": 2,
+            "Average Battery Life (in hours)": 14,
+            "Item model number": "XPS13-9310",
+            "Number of Processors": 1,
+            "Memory Type": "LPDDR4x",
+            "Voltage": "19.5 Volts",
+            "Batteries": "4-cell Lithium-ion"
+          }
+        }
+      }
+    ]
+  }
+}

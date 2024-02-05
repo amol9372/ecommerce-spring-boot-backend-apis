@@ -1,0 +1,39 @@
+version: '3.0'
+
+services:
+
+  elasticsearch:
+    image: elasticsearch:8.11.1
+    container_name: es-container
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment: [ 'ELASTIC_USERNAME=elastic', 'ELASTIC_PASSWORD="<password>"','ES_JAVA_OPTS=-Xms512m -Xmx512m','CLI_JAVA_OPTS=-Xms2g -Xmx2g','bootstrap.memory_lock=true','discovery.type=single-node','xpack.security.enabled=true', 'xpack.security.enrollment.enabled=false' ]
+
+  logstash:
+    image: logstash:8.11.1
+    volumes:
+      # - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/conf:/usr/share/logstash/pipeline:ro
+    #      - /var/log/GDPR/myapplication:/var/log/GDPR/myapplication:ro
+    ports:
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTICSEARCH_HOSTS: http://es-container:9200
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+
+networks:
+  elk:
+    driver: bridge
+
+volumes:
+  esdata:
+    driver: local

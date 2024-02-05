@@ -1,0 +1,24 @@
+{
+  "bool": {
+    "filter": [
+      {
+        "terms": {
+          "features.Brand": [
+            "Samsung",
+            "Apple"
+          ]
+        }
+      }
+    ],
+    "must": [
+      {
+        "match": {
+          "name": {
+            "_name": "Galaxy",
+            "query": "Galaxy"
+          }
+        }
+      }
+    ]
+  }
+}
