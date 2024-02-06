@@ -73,3 +73,10 @@ docker-compose up
 | Product  | `https://localhost:8081/api`  |
 | Cart     | `https://localhost:8082/api`  |
 | Order    | `https://localhost:8083/api`  |
+
+
+### Swagger endpoints
+| Type  | Endpoint                      |
+|----------|-------------------------------|
+| Api docs   | `/api/docs`  |
+| Swagger UI | `/swagger-ui`  |
