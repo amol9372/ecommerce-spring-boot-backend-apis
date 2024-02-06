@@ -1,0 +1,9 @@
+FROM amazoncorretto:17-alpine-jdk
+WORKDIR /app
+# Install Maven
+RUN apk add --no-cache maven
+
+# Copy your project files and build the project
+COPY . .
+RUN mvn clean install
+ENTRYPOINT ["java","-jar","target/ecomm-cart-1.0.jar"]
