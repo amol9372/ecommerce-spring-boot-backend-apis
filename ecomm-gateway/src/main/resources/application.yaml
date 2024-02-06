@@ -46,7 +46,7 @@ logging:
     org:
       springframework:
         cloud:
-          gateway: debug
+          gateway: info
 
 auth0:
   userinfo:
@@ -55,3 +55,11 @@ auth0:
 
 jwt:
   secret-key: 436d58303377335967726d3537344a74747877314e7a4337684b6f6e72707149
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true
+  api-docs:
+    enabled: true
+    path: /api-docs

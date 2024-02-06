@@ -13,7 +13,7 @@ spring:
         - id: ecomm-user
           uri: http://localhost:8080/
           predicates:
-            - Path=/user/**, /address/**
+            - Path=/user/**, /address/**, /user/*/**
           filters:
             - PrefixPath=/api
         - id: ecomm-product
@@ -56,3 +56,11 @@ auth0:
 
 jwt:
   secret-key: 436d58303377335967726d3537344a74747877314e7a4337684b6f6e72707149
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true
+  api-docs:
+    enabled: true
+    path: /api-docs

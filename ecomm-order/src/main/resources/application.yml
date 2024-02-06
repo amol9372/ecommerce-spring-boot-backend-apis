@@ -16,3 +16,11 @@ logging:
 
 host:
   url: ${HOST_URL}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true
+  api-docs:
+    enabled: true
+    path: /api-docs

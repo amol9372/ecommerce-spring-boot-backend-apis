@@ -27,10 +27,11 @@ public class EcommGatewayApplication {
     return new WebProperties.Resources();
   }
 
-  	@Bean
-  	public PasswordEncoder passwordEncoder(){
-  		return new BCryptPasswordEncoder();
-  	};
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
   @Bean
   public ReactiveUserDetailsService userDetailsService(UserCredentialsRepository repository) {
 

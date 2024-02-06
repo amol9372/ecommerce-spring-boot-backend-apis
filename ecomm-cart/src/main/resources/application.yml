@@ -45,3 +45,11 @@ host:
 logging:
   level:
     root: info
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true
+  api-docs:
+    enabled: true
+    path: /api-docs

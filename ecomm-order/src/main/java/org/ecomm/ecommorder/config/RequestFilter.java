@@ -29,8 +29,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class RequestFilter extends OncePerRequestFilter {
 
-  @Autowired
-  UserServiceClient userServiceClient;
+  @Autowired UserServiceClient userServiceClient;
 
   @Override
   protected void doFilterInternal(
@@ -71,9 +70,13 @@ public class RequestFilter extends OncePerRequestFilter {
   }
 
   @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) {
-    String path = request.getRequestURI();
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    if (request.getRequestURI().contains("api-docs")
+        || request.getRequestURI().contains("swagger")
+        || request.getRequestURI().contains("stripe")) {
+      return true;
+    }
 
-    return path.contains("/stripe");
+    return false;
   }
 }

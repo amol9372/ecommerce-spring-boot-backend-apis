@@ -71,4 +71,13 @@ public class RequestFilter extends OncePerRequestFilter {
     String userString = objectMapper.writeValueAsString(basicUserInfo);
     MDC.put("user", userString);
   }
+
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    if(request.getRequestURI().contains("api-docs") || request.getRequestURI().contains("swagger")){
+      return true;
+    }
+
+    return false;
+  }
 }

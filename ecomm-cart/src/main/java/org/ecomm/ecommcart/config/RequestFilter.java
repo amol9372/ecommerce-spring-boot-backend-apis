@@ -83,4 +83,13 @@ public class RequestFilter extends OncePerRequestFilter {
       throw new UnauthorizedUserException(HttpStatus.UNAUTHORIZED, errorResponse);
     }
   }
+
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    if(request.getRequestURI().contains("api-docs") || request.getRequestURI().contains("swagger")){
+      return true;
+    }
+
+    return false;
+  }
 }
