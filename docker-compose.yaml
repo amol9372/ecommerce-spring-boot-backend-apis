@@ -1,7 +1,21 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  db:
+    build:
+      context: ./ecomm-db
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - /Users/amolsingh/projects/ecomm/BE/ecomm-db/postgres-data:/var/lib/postgresql/data
+      - /Users/amolsingh/projects/ecomm/BE/ecomm-db/ecomm.sql:/docker-entrypoint-initdb.d/ecomm.sql
+    env_file:
+      - .env
+
   gateway:
+    depends_on:
+      - db
     build:
       context: ./ecomm-gateway
       dockerfile: Dockerfile.dev
@@ -9,8 +23,6 @@ services:
       - "8091:8091"
     env_file:
       - .env
-    depends_on:
-      - db  
 
   user:
     build:
@@ -21,7 +33,7 @@ services:
     env_file:
       - .env
     depends_on:
-      - db  
+      - db
 
   cart:
     build:
@@ -32,7 +44,7 @@ services:
     env_file:
       - .env
     depends_on:
-      - db  
+      - db
 
   product:
     build:
@@ -43,7 +55,7 @@ services:
     env_file:
       - .env
     depends_on:
-      - db  
+      - db
 
   order:
     build:
@@ -54,19 +66,7 @@ services:
     env_file:
       - .env
     depends_on:
-      - db  
-
-  db:
-    build:
-      context: ./ecomm-db
-      dockerfile: Dockerfile
-    ports:
-      - "5432:5432"
-    volumes:
-      - /Users/amolsingh/projects/ecomm/BE/ecomm-db/postgres-data:/var/lib/postgresql/data
-      - /Users/amolsingh/projects/ecomm/BE/ecomm-db/ecomm.sql:/docker-entrypoint-initdb.d/ecomm.sql  
-    # env_file:
-    #   - .env    
+      - db
 
   elasticsearch:
     image: elasticsearch:8.11.1
@@ -76,7 +76,17 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
-    environment: [ 'ELASTIC_USERNAME=elastic', 'ELASTIC_PASSWORD=DkIedPPSCb','ES_JAVA_OPTS=-Xms512m -Xmx512m','CLI_JAVA_OPTS=-Xms2g -Xmx2g','bootstrap.memory_lock=true','discovery.type=single-node','xpack.security.enabled=true', 'xpack.security.enrollment.enabled=false' ]
+    environment:
+      [
+        "ELASTIC_USERNAME=elastic",
+        "ELASTIC_PASSWORD=DkIedPPSCb",
+        "ES_JAVA_OPTS=-Xms512m -Xmx512m",
+        "CLI_JAVA_OPTS=-Xms2g -Xmx2g",
+        "bootstrap.memory_lock=true",
+        "discovery.type=single-node",
+        "xpack.security.enabled=true",
+        "xpack.security.enrollment.enabled=false",
+      ]
 
   logstash:
     image: logstash:8.11.1
@@ -95,7 +105,6 @@ services:
       - elasticsearch
     links:
       - elasticsearch
-
 networks:
   elk:
     driver: bridge
