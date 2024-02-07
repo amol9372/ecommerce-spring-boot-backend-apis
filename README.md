@@ -29,6 +29,7 @@ https://www.postman.com/galactic-eclipse-361945/workspace/public-9372/collection
 - Spring data JPA
 - Postgres 14
 - Spring cloud gateway
+- Docker (docker-compose)
 
 ## ER Diagram
 
