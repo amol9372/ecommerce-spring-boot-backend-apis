@@ -56,8 +56,76 @@ drwxr-xr-x@ 14 amolsingh  staff   448  5 Feb 19:44 ..
 4. Run the docker compose command
 
 ```bash
-docker-compose up
+./start-services.sh
 ```
+
+## Onboarding
+
+1. Create users
+
+   - Create a user using the `/auth/register` endpoint
+   - In the DB table `user_roles` set the role as `ADMIN`
+  
+2. Create elastic search index using the following command
+
+```bash
+#!/bin/bash
+
+curl --location --request PUT 'localhost:9200/productv1' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ZWxhc3RpYzpEa0llZFBQU0Ni' \
+--data '{
+    "settings": {
+        "analysis": {
+            "filter": {
+                "autocomplete_filter": {
+                    "type": "edge_ngram",
+                    "min_gram": 1,
+                    "max_gram": 20
+                }
+            },
+            "analyzer": {
+                "autocomplete": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": [
+                        "lowercase"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "category_tree": {
+                "type": "keyword"
+            },
+            "id": {
+                "type": "integer"
+            },
+            "description": {
+                "type": "text"
+            },
+            "name": {
+                "type": "text",
+                "analyzer": "autocomplete",
+                "search_analyzer": "standard"
+            },
+            "price": {
+                "type": "double"
+            },
+            "updated_on": {
+                "type": "date"
+            },
+            "created_on": {
+                "type": "date"
+            }
+        }
+    }
+}'
+```     
+
+      
 
 ## API Root Endpoint
 
