@@ -6,6 +6,11 @@ Ecommerce website based on microservices architecture in spring boot 3
 - It contains all the functionalities like product inventory, variance, cart, checkout etc
 - All the APIs are constructed with Spring boot 3
 
+## Postman collection (Public)
+```
+https://www.postman.com/galactic-eclipse-361945/workspace/public-9372/collection/1877749-6742d038-c937-4aac-838e-7e30ff85865d?action=share&creator=1877749
+```
+
 ## Features
 
 - Authentication with Jwt
@@ -28,6 +33,28 @@ Ecommerce website based on microservices architecture in spring boot 3
 ## ER Diagram
 
 <img width="1676" alt="Pasted Graphic" src="https://github.com/amol9372/ecommerce-spring-boot-backend-apis/assets/20081129/94d43c0d-2d2e-40be-a44d-dec762b3ffb2">
+
+## API Root Endpoint
+
+### Spring cloud Gateway
+
+`https://localhost:8091`
+
+### Microservice Endpoints
+
+| Service  | Base URL                           |
+|----------|-------------------------------|
+| User     | `https://localhost:8080/api`  |
+| Product  | `https://localhost:8081/api`  |
+| Cart     | `https://localhost:8082/api`  |
+| Order    | `https://localhost:8083/api`  |
+
+
+### Swagger endpoints
+| Type  | Endpoint                      |
+|----------|-------------------------------|
+| Api docs   | `/api/docs`  |
+| Swagger UI | `/swagger-ui`  |
 
 ## Run Application locally
 
@@ -58,93 +85,83 @@ drwxr-xr-x@ 14 amolsingh  staff   448  5 Feb 19:44 ..
 ```bash
 ./start-services.sh
 ```
-
-## Onboarding
-
-1. Create users
-
-   - Create a user using the `/auth/register` endpoint
-   - In the DB table `user_roles` set the role as `ADMIN`
-  
-2. Create elastic search index using the following command
+5. Create elastic search index `productv1` using the following command
 
 ```bash
-#!/bin/bash
+./create-index.sh
+```
+## Onboarding
 
-curl --location --request PUT 'localhost:9200/productv1' \
---header 'Content-Type: application/json' \
---header 'Authorization: Basic ZWxhc3RpYzpEa0llZFBQU0Ni' \
---data '{
-    "settings": {
-        "analysis": {
-            "filter": {
-                "autocomplete_filter": {
-                    "type": "edge_ngram",
-                    "min_gram": 1,
-                    "max_gram": 20
-                }
-            },
-            "analyzer": {
-                "autocomplete": {
-                    "type": "custom",
-                    "tokenizer": "standard",
-                    "filter": [
-                        "lowercase"
-                    ]
-                }
-            }
-        }
-    },
-    "mappings": {
-        "properties": {
-            "category_tree": {
-                "type": "keyword"
-            },
-            "id": {
-                "type": "integer"
-            },
-            "description": {
-                "type": "text"
-            },
-            "name": {
-                "type": "text",
-                "analyzer": "autocomplete",
-                "search_analyzer": "standard"
-            },
-            "price": {
-                "type": "double"
-            },
-            "updated_on": {
-                "type": "date"
-            },
-            "created_on": {
-                "type": "date"
-            }
-        }
+### APIs setup
+Import above postman collection (create a fork also) and lets do the basic setup
+
+#### Register User
+
+- Use the `/auth/register` API to register user in the application
+- The above user will have `USER` role. 
+- Admin user is already created in the application with below credentials in `users` table
+
+ | email  | password                           |
+|----------|-------------------------------|
+| admin@example.com     | `password`  |
+
+#### Authenticate user & Get JWT
+Use the `/auth/login`  API to authenticate user and get the credentials (jwt token + userinfo)
+
+```json
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQURNSU4iXSwic3ViIjoiYXBwfDk4ZWI2NzRkYTdjNzMzYjIxYWMwZTBkYiIsImlhdCI6MTcwNzMxODY2MywiZXhwIjoxNzA3MzI1ODYzfQ.qEulnxe9IQfOFzO-6F1l81kvy61cNvo4ub3MdurX1Ec",
+    "userInfo": {
+        "sub": "app|98eb674da7c733b21ac0e0db",
+        "name": "admin@example.com",
+        "picture": null,
+        "email": "admin@example.com",
+        "nickname": "admin",
+        "email_verified": false
     }
-}'
-```     
+}
+```
+Use the `token` as in Authorization header for all APIs
 
-      
+#### Headers
 
-## API Root Endpoint
+Header values are set in `collection variables` 
+- Authorization (with bearer token)
+- x-token-type (default as `app`) 
 
-### Spring cloud Gateway
+#### Reference data 
 
-`https://localhost:8091`
+As a part of starting docker containers, reference data is already created in below entities: 
 
-### Microservice Endpoints
+| Entity            | API                                       | DB Table         |
+|-------------------|-------------------------------------------|------------------|
+| Category          | `/admin/category`                         | `category`       |
+| Feature Template  | `/admin/feature-template/{categoryId}`    | `feature_template`|
+| Variant Features  | `/admin/variant/{categoryId}`             | `master_variant` |
 
-| Service  | Base URL                           |
-|----------|-------------------------------|
-| User     | `https://localhost:8080/api`  |
-| Product  | `https://localhost:8081/api`  |
-| Cart     | `https://localhost:8082/api`  |
-| Order    | `https://localhost:8083/api`  |
+## Feature Templates & Product Variants
 
+The application uses the concept of feature templates & product variants
 
-### Swagger endpoints
-| Type  | Endpoint                      |
-|----------|-------------------------------|
-| Api docs   | `/api/docs`  |
-| Swagger UI | `/swagger-ui`  |
+A `feature template` is a list of base line features which a product has
+eg - A laptop will have base features as 
+
+| Feature            | Details                             |
+|--------------------------|-------------------------------------|
+| Brand                    | Apple                               |
+| Model Name               | MacBook Pro                         |
+| Screen Size              | 14.2 Inches                         |
+| CPU Model                | Unknown                             |
+| Operating System         | Mac OS                              |
+| Special Feature          | Fingerprint Reader                  |
+| Graphics Card Description| Integrated                          |
+
+Out of these features, only few can be a part of `variant` features. Variant features are basically what distinguishes the different SKUs of a product like color, storage, memory etc 
+
+An example of variant features 
+
+| Feature            | Details                             |
+|--------------------------|-------------------------------------|
+| RAM Memory Installed Size| 8 GB                                |
+| Colour | Silver | 
+| Hard Disk Size | 512 GB |
