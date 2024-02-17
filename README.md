@@ -6,6 +6,10 @@ Ecommerce website based on microservices architecture in spring boot 3
 - It contains all the functionalities like product inventory, variance, cart, checkout etc
 - All the APIs are constructed with Spring boot 3
 
+## Application architecture
+
+![api gateway flow](https://github.com/amol9372/ecommerce-spring-boot-backend-apis/assets/20081129/a432fac4-ce61-4cca-a64c-aa459d525c2a)
+
 ## Postman collection (Public)
 ```
 https://www.postman.com/galactic-eclipse-361945/workspace/public-9372/collection/1877749-6742d038-c937-4aac-838e-7e30ff85865d?action=share&creator=1877749
