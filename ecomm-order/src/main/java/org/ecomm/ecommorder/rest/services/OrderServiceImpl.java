@@ -2,6 +2,7 @@ package org.ecomm.ecommorder.rest.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stripe.model.PaymentLink;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,10 +21,12 @@ import org.ecomm.ecommorder.rest.feign.model.CartResponse;
 import org.ecomm.ecommorder.rest.feign.model.ProductOrderDetails;
 import org.ecomm.ecommorder.rest.feign.model.UserResponse;
 import org.ecomm.ecommorder.rest.model.OrderSummary;
+import org.ecomm.ecommorder.rest.model.StripeInput;
 import org.ecomm.ecommorder.utils.TaxUtils;
 import org.ecomm.ecommorder.utils.Utility;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +39,8 @@ public class OrderServiceImpl implements OrderService {
   @Autowired UserServiceClient userServiceClient;
 
   @Autowired OrderRepository orderRepository;
+
+  @Autowired StripeService stripeService;
 
   @Override
   public OrderSummary generateOrderSummary() {
@@ -53,45 +58,35 @@ public class OrderServiceImpl implements OrderService {
   }
 
   /**
-   *
-   *
    * <ul>
    *   <li>Get order items [order_line]
    *   <li>Get user address [active]
-   *   <li>Payment method - TODO
+   *   <li>Payment method - [Stripe payment link]
    *   <li>Get Order summary
    *   <li>Clear cart
    * </ul>
+   *
+   * @return
    */
   @Override
   @Transactional
-  public void createOrder() {
+  public PaymentLink createOrder() {
     UserResponse user = getLoggedInUser();
 
     ResponseEntity<CartResponse> cartResponseEntity =
         cartServiceClient.getActiveCart(user.getEmail(), "order");
 
-    CartResponse response = cartResponseEntity.getBody();
+    CartResponse cartResponse = cartResponseEntity.getBody();
 
-    OrderSummary orderSummary = getSummary(response);
+    OrderSummary orderSummary = getSummary(cartResponse);
 
     ResponseEntity<AddressResponse> addressResponse =
         userServiceClient.getActiveAddressByEmail(user.getEmail(), "order");
 
-    EOrder eOrder =
-        EOrder.builder()
-            .orderNo(UUID.randomUUID())
-            .orderStatus(OrderStatus.ORDER_PLACED)
-            .deliveryStatus(DeliveryStatus.NOT_SHIPPED)
-            .paymentMethod("link")
-            .userId(user.getId())
-            .totalPrice(orderSummary.getItemsSubTotal() + orderSummary.getTax())
-            .addressId(addressResponse.getBody().getId())
-            .orderPlacedOn(LocalDateTime.now())
-            .build();
+    EOrder eOrder = createOrder(user, orderSummary, addressResponse);
 
     List<EOrderItem> orderItems =
-        Utility.stream(response.getProductCartDetails())
+        Utility.stream(cartResponse.getProductCartDetails())
             .map(item -> getOrderItem(item, eOrder))
             .collect(Collectors.toList());
 
@@ -99,6 +94,30 @@ public class OrderServiceImpl implements OrderService {
 
     orderRepository.save(eOrder);
     cartServiceClient.checkout(user.getEmail(), "ecomm-cart");
+
+    // create stripe payment link
+    return stripeService.createPaymentLink(
+            StripeInput.builder()
+                    .userAddressPair(Pair.of(user, addressResponse.getBody()))
+                    .orderDetails(cartResponse.getProductCartDetails())
+                    .build());
+
+  }
+
+  private static EOrder createOrder(
+      UserResponse user,
+      OrderSummary orderSummary,
+      ResponseEntity<AddressResponse> addressResponse) {
+    return EOrder.builder()
+        .orderNo(UUID.randomUUID())
+        .orderStatus(OrderStatus.ORDER_PLACED)
+        .deliveryStatus(DeliveryStatus.NOT_SHIPPED)
+        .paymentMethod("link")
+        .userId(user.getId())
+        .totalPrice(orderSummary.getItemsSubTotal() + orderSummary.getTax())
+        .addressId(addressResponse.getBody().getId())
+        .orderPlacedOn(LocalDateTime.now())
+        .build();
   }
 
   private static OrderSummary getSummary(CartResponse response) {

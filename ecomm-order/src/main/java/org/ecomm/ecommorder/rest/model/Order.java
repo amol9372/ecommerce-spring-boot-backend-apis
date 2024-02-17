@@ -1,6 +1,8 @@
 package org.ecomm.ecommorder.rest.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -17,4 +19,5 @@ public class Order {
   String deliveryStatus;
   LocalDateTime deliveredOn;
   String paymentMethod;
+  List<OrderItems> items;
 }

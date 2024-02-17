@@ -13,13 +13,13 @@ spring:
         - id: ecomm-user
           uri: http://172.17.0.1:8080/
           predicates:
-            - Path=/user/**, /address/**
+            - Path=/user/**, /address/**, /user/*/**, /admin/user/**
           filters:
             - PrefixPath=/api
         - id: ecomm-product
           uri: http://172.17.0.1:8081/
           predicates:
-            - Path=/product/**, /category/**, /admin/**
+            - Path=/product/**, /category/**, /admin/**, /inventory/**, /brand/**
           filters:
             - PrefixPath=/api
         - id: ecomm-cart
@@ -48,7 +48,8 @@ logging:
     org:
       springframework:
         cloud:
-          gateway: info
+          gateway: debug
+    root: debug
 
 auth0:
   userinfo:

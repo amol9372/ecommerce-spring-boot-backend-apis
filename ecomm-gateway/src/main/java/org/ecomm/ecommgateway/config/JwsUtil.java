@@ -1,5 +1,4 @@
 package org.ecomm.ecommgateway.config;
-
 import java.security.Key;
 
 import com.auth0.jwk.Jwk;
@@ -9,10 +8,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.ecomm.ecommgateway.exception.ErrorCodes;
 import org.ecomm.ecommgateway.exception.ErrorResponse;
@@ -27,7 +26,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
@@ -44,7 +42,7 @@ public class JwsUtil {
   @Value("${jwt.secret-key}")
   String secretKey;
 
-  static final long JWT_EXPIRATION = 2 * 60 * 60 * 1000;
+  static final long JWT_EXPIRATION = 60 * 60 * 1000;
 
   static final long REFRESH_EXPIRATION = 3 * 24 * 60 * 60 * 1000;
 
@@ -124,15 +122,41 @@ public class JwsUtil {
 
   public UserInfo verifyAppToken(String token) {
 
-    Claims body =
-        Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
+    Claims body = getClaims(token);
 
     return mapClaimsToUserInfo(body);
   }
 
+  private Claims getClaims(String token) {
+    Claims body;
+    try {
+      body =
+          Jwts.parserBuilder()
+              .setSigningKey(getSignInKey())
+              .build()
+              .parseClaimsJws(token)
+              .getBody();
+    } catch (ExpiredJwtException e) {
+      throw new JWTException(
+          HttpStatus.UNAUTHORIZED, ErrorResponse.builder().message("JWT token is expired").code("jwt_expired").build());
+    } catch (UnsupportedJwtException e) {
+      throw new JWTException(
+          HttpStatus.UNAUTHORIZED,
+          ErrorResponse.builder().message("JWT format is incorrect").build());
+    } catch (MalformedJwtException e) {
+      throw new JWTException(
+          HttpStatus.UNAUTHORIZED,
+          ErrorResponse.builder().message("JWT token is malformed").build());
+    } catch (SignatureException e) {
+      throw new JWTException(
+          HttpStatus.UNAUTHORIZED,
+          ErrorResponse.builder().message("JWT token has incorrect signature").build());
+    }
+    return body;
+  }
+
   public Authentication getAuthentication(String token) {
-    Claims claims =
-        Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
+    Claims claims = getClaims(token);
 
     String roles =
         (String) claims.get("roles", List.class).stream().collect(Collectors.joining(","));

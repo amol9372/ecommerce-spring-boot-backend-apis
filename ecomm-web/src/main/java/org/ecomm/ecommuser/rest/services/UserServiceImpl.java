@@ -1,8 +1,9 @@
 package org.ecomm.ecommuser.rest.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.ecomm.ecommuser.exception.ErrorCodes;
 import org.ecomm.ecommuser.exception.ErrorResponse;
@@ -16,12 +17,9 @@ import org.ecomm.ecommuser.rest.builder.UserBuilder;
 import org.ecomm.ecommuser.rest.model.User;
 import org.ecomm.ecommuser.rest.request.CreateUserRequest;
 import org.ecomm.ecommuser.utils.Utility;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -65,5 +63,12 @@ public class UserServiceImpl implements UserService {
                         .build()));
 
     return UserBuilder.with(euser);
+  }
+
+  @Override
+  public List<User> getAllUsers() {
+    var eUsers = userRepository.findAll();
+    
+    return eUsers.stream().map(UserBuilder::with).collect(Collectors.toList());
   }
 }

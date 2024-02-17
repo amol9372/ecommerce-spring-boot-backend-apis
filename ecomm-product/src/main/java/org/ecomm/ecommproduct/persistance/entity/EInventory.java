@@ -20,6 +20,11 @@ public class EInventory extends BaseEntity {
     @JoinColumn(name = "product_id")
     EProduct product;
 
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "variant_id")
+    EProductVariant variant;
+
     @Column(name = "sku")
     String sku;
 

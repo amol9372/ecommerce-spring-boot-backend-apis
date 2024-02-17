@@ -1,6 +1,3 @@
 package org.ecomm.ecommorder.utils;
 
-public class MDCUtils {
-
-
-}
+public class MDCUtils {}

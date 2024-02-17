@@ -4,6 +4,8 @@ import org.ecomm.ecommuser.rest.model.User;
 import org.ecomm.ecommuser.rest.request.CreateUserRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface UserService {
 
@@ -13,4 +15,5 @@ public interface UserService {
 
     User getBasicUserInfo(String email);
 
+    List<User> getAllUsers();
 }

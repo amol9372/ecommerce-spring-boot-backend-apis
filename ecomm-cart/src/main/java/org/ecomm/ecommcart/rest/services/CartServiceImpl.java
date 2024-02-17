@@ -9,13 +9,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ecomm.ecommcart.exception.ErrorCodes;
 import org.ecomm.ecommcart.exception.ErrorResponse;
 import org.ecomm.ecommcart.exception.ResourceNotFoundException;
+import org.ecomm.ecommcart.exception.SoldOutInventoryException;
 import org.ecomm.ecommcart.persistance.entity.cart.CartStatus;
 import org.ecomm.ecommcart.persistance.entity.cart.ECart;
 import org.ecomm.ecommcart.persistance.entity.cart.ECartItem;
@@ -24,7 +24,7 @@ import org.ecomm.ecommcart.persistance.repository.CartRepository;
 import org.ecomm.ecommcart.rest.builder.CartBuilder;
 import org.ecomm.ecommcart.rest.feign.ProductServiceClient;
 import org.ecomm.ecommcart.rest.feign.UserServiceClient;
-import org.ecomm.ecommcart.rest.feign.model.ProductCartDetail;
+import org.ecomm.ecommcart.rest.feign.model.ProductInventory;
 import org.ecomm.ecommcart.rest.model.Cart;
 import org.ecomm.ecommcart.rest.model.CartItem;
 import org.ecomm.ecommcart.rest.feign.model.UserResponse;
@@ -33,7 +33,7 @@ import org.ecomm.ecommcart.utils.Utility;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,23 +54,63 @@ public class CartServiceImpl implements CartService {
     // check if cart already exists
     UserResponse user = getLoggedInUser();
 
+    checkInventory(request);
+
     var activeCart =
         cartRepository
             .findByUserIdAndStatus(user.getId(), CartStatus.ACTIVE)
             .orElse(createCart.apply(user.getId()));
 
-    var cartItem =
-        ECartItem.builder()
-            .cart(activeCart)
-            .productId(request.getProductId())
-            .quantity(request.getQuantity())
-            .variantId(request.getVariantId())
-            .build();
+    // check if item already exists in cart
+    Utility.stream(activeCart.getCartItems())
+        .filter(item -> item.getVariantId().equals(request.getVariantId()))
+        .findFirst()
+        .ifPresentOrElse(
+            item -> {
+              int quantity = item.getQuantity() + request.getQuantity();
+              item.setQuantity(quantity);
+              updateCartItem(activeCart, item);
+            },
+            () -> {
+              var cartItem =
+                  ECartItem.builder()
+                      .cart(activeCart)
+                      .productId(request.getProductId())
+                      .quantity(request.getQuantity())
+                      .variantId(request.getVariantId())
+                      .build();
+
+              addItemToCart(activeCart, cartItem);
+            });
 
     log.info("Adding product to cart ::: {}", request);
-    addItemToCart(activeCart, cartItem);
-
     cartRepository.save(activeCart);
+
+    log.info("Updating inventory ::: {}", request);
+
+    updateInventory(
+        ProductInventory.builder()
+            .quantity(request.getQuantity())
+            .variantId(request.getVariantId())
+            .build());
+  }
+
+  private synchronized void checkInventory(AddToCartRequest request) {
+    ProductInventory inventory =
+        productServiceClient.checkInventory(request.getVariantId(), "ecomm-cart").getBody();
+
+    if (inventory.getQuantity() <= request.getQuantity()) {
+      throw new SoldOutInventoryException(
+          HttpStatus.UNPROCESSABLE_ENTITY,
+          ErrorResponse.builder().code("inventory_issue").message("Inventory has been sold out").build());
+    }
+  }
+
+
+  @Async
+  public void updateInventory(ProductInventory inventory) {
+
+    productServiceClient.updateInventory(inventory, "ecomm-cart");
   }
 
   @Override
@@ -82,9 +122,19 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
+  @Transactional
   public void deleteCartItem(int cartItemId) {
 
+    UserResponse user = getLoggedInUser();
+
     cartRepository.deleteCartItem(cartItemId);
+
+    // delete cart if 0 items
+    var cart = cartRepository.findByUserIdAndStatus(user.getId(), CartStatus.ACTIVE).orElseThrow();
+
+    if (cart.getCartItems().isEmpty()) {
+      cartRepository.deleteById(cart.getId());
+    }
   }
 
   @Override
@@ -125,12 +175,13 @@ public class CartServiceImpl implements CartService {
         cartRepository
             .findByUserIdAndStatus(user.getId(), CartStatus.ACTIVE)
             .orElseThrow(
-                () -> new ResourceNotFoundException(
+                () ->
+                    new ResourceNotFoundException(
                         HttpStatus.UNPROCESSABLE_ENTITY,
                         ErrorResponse.builder()
-                                .code(ErrorCodes.RESOURCE_DOES_NOT_EXIST)
-                                .message("Cart does not exist")
-                                .build()));
+                            .code(ErrorCodes.RESOURCE_DOES_NOT_EXIST)
+                            .message("Cart does not exist")
+                            .build()));
 
     String variantIds =
         Utility.stream(cart.getCartItems())
@@ -196,6 +247,15 @@ public class CartServiceImpl implements CartService {
               var cartItems = new ArrayList<ECartItem>();
               cartItems.add(cartItem);
               activeCart.setCartItems(cartItems);
+            });
+  }
+
+  private static void updateCartItem(ECart activeCart, ECartItem cartItem) {
+    Optional.ofNullable(activeCart.getCartItems())
+        .ifPresent(
+            eCartItems -> {
+              activeCart.getCartItems().removeIf(item -> item.getId().equals(cartItem.getId()));
+              activeCart.getCartItems().add(cartItem);
             });
   }
 

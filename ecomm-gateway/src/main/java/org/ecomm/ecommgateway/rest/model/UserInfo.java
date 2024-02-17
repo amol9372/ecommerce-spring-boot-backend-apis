@@ -19,4 +19,5 @@ public class UserInfo {
     String email;
     @JsonProperty("email_verified")
     boolean emailVerified;
+    String role;
 }

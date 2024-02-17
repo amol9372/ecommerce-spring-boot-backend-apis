@@ -40,7 +40,7 @@ public class EProduct extends BaseEntity {
   @Column(columnDefinition = "jsonb")
   JsonNode features;
 
-  @OneToMany(mappedBy = "product")
+  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
   List<EProductImage> productImages;
 
   @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

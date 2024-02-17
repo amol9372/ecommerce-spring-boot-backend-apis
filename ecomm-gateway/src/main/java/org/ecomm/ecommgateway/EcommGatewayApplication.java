@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
 import reactor.core.publisher.Mono;
 
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
@@ -22,6 +23,10 @@ public class EcommGatewayApplication {
     SpringApplication.run(EcommGatewayApplication.class, args);
   }
 
+  @Bean
+  WebSocketHandlerAdapter webSocketHandlerAdapter(){
+    return new WebSocketHandlerAdapter();
+  }
   @Bean
   public WebProperties.Resources resources() {
     return new WebProperties.Resources();

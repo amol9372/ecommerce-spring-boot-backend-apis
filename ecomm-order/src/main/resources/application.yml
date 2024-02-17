@@ -19,6 +19,9 @@ logging:
 host:
   url: ${HOST_URL}
 
+stripe:
+  api-key: ${STRIPE_API_KEY}
+
 springdoc:
   swagger-ui:
     path: /swagger-ui

@@ -15,4 +15,5 @@ public class Inventory extends BaseModel {
   int quantityReserved;
   int quantityAvailable;
   int quantitySold;
+  int variantId;
 }

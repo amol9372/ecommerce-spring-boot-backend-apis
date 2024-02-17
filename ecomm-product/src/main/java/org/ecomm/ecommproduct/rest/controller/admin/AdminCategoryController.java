@@ -10,24 +10,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("admin/category")
 public class AdminCategoryController {
 
   @Autowired AdminCategoryService adminCategoryService;
 
-  @GetMapping
+  @GetMapping("category")
   public List<Category> getCategories() {
     return adminCategoryService.getCategories();
   }
 
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping
+  @PostMapping("admin/category")
   public void createCategory(@RequestBody AddCategoryRequest request) {
     adminCategoryService.addCategory(request);
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping("{id}")
+  @DeleteMapping("admin/category/{id}")
   public void deleteCategory(@PathVariable Integer id) {
     adminCategoryService.deleteCategory(id);
   }

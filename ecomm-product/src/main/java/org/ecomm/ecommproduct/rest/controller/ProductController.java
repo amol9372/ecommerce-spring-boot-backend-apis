@@ -8,8 +8,10 @@ import org.ecomm.ecommproduct.rest.request.pagination.SearchRequest;
 import org.ecomm.ecommproduct.rest.services.ProductESService;
 import org.ecomm.ecommproduct.rest.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -27,8 +29,14 @@ public class ProductController {
     return productESService.searchProducts(request);
   }
 
+  @Autowired
+  RedisTemplate redisTemplate;
+
   @GetMapping("{id}")
   public ProductDetails getProductDetails(@PathVariable int id) {
+
+
+
     return productService.getProductDetails(id);
   }
 

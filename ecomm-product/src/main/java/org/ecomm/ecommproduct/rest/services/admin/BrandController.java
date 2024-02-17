@@ -8,18 +8,17 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/admin/brand")
 public class BrandController {
 
   @Autowired BrandServiceImpl brandServiceImpl;
 
-  @PostMapping
+  @PostMapping("admin/brand")
   public ResponseEntity<?> createBrand(@RequestBody Brand brand) {
     brandServiceImpl.createBrand(brand);
     return ResponseEntity.created(URI.create("/admin/brand")).build();
   }
 
-  @GetMapping
+  @GetMapping("brand")
   public ResponseEntity<?> getAllBrands() {
     return ResponseEntity.ok(brandServiceImpl.getAllBrands());
   }

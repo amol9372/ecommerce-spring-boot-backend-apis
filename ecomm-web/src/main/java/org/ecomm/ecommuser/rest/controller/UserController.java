@@ -25,7 +25,6 @@ public class UserController {
      return ResponseEntity.ok(userService.getBasicUserInfo(email));
   }
 
-
   @PostMapping
   public ResponseEntity<Object> createAppUser(
           @RequestBody CreateUserRequest request, HttpServletRequest httpServletRequest) {

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -45,17 +47,21 @@ public class SecurityConfig {
         .httpBasic()
         .disable()
         .authorizeExchange(
-            authorizeExchangeSpec -> authorizeExchangeSpec
-                .pathMatchers(
-                    "/auth/**", "/stripe/**", "/swagger-ui/**", "/api-docs/**", "/webjars/**")
-                .permitAll()
-                .pathMatchers("/admin/**")
-                .hasAnyAuthority("ADMIN", "ROLE_ADMIN")
-                .anyExchange()
-                .authenticated()
-                .and()
-                .cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
-                .addFilterBefore(webFilter, SecurityWebFiltersOrder.HTTP_BASIC))
+            authorizeExchangeSpec ->
+                authorizeExchangeSpec
+                    .pathMatchers("/ws/events")
+                    //.hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                        .permitAll()
+                    .pathMatchers(
+                        "/auth/**", "/stripe/**", "/swagger-ui/**", "/api-docs/**", "/webjars/**")
+                    .permitAll()
+                    .pathMatchers("/admin/**")
+                    .hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                    .anyExchange()
+                    .authenticated()
+                    .and()
+                    .cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
+                    .addFilterBefore(webFilter, SecurityWebFiltersOrder.HTTP_BASIC))
         .build();
   }
 
@@ -74,4 +80,5 @@ public class SecurityConfig {
     source.registerCorsConfiguration("/**", corsConfiguration);
     return source;
   }
+
 }

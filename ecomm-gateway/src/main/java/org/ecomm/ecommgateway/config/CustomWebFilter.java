@@ -3,7 +3,9 @@ package org.ecomm.ecommgateway.config;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.ecomm.ecommgateway.rest.auth0.Auth0ServiceClient;
+import org.ecomm.ecommgateway.rest.controller.PostsWebSocketHandler;
 import org.ecomm.ecommgateway.rest.model.UserInfo;
+import org.ecomm.ecommgateway.rest.model.WSEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,8 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.Objects;
+
 @Configuration
 @Slf4j
 public class CustomWebFilter implements WebFilter {
@@ -25,6 +29,8 @@ public class CustomWebFilter implements WebFilter {
   @Autowired Auth0ServiceClient auth0ServiceClient;
 
   @Autowired JwsUtil jwsUtil;
+
+  @Autowired PostsWebSocketHandler postsWebSocketHandler;
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -60,8 +66,24 @@ public class CustomWebFilter implements WebFilter {
                                       .header("x-auth0-user-email", userInfo.getEmail())
                                       .build())
                               .build())
+                                            .then(
+                                                Mono.fromRunnable(
+                                                    () -> {
+                                                      // ServerHttpResponse response =
+//                       exchange.getResponse();
+
+                                                      postsWebSocketHandler.broadcast(
+                                                          WSEvent.builder()
+                                                              .message(
+                                                                  String.format(
+                                                                      "%s is trying the API %s",
+                                                                      userInfo.getEmail(),
+                       request.getURI()))
+                                                              .build());
+                                                    }))
                       .contextWrite(
-                          ReactiveSecurityContextHolder.withAuthentication(authentication)));
+                          ReactiveSecurityContextHolder.withAuthentication(authentication)))
+          .then();
     }
     return chain.filter(exchange);
   }
@@ -76,6 +98,4 @@ public class CustomWebFilter implements WebFilter {
   private boolean isAuthMissing(ServerHttpRequest request) {
     return !request.getHeaders().containsKey("Authorization");
   }
-
-
 }

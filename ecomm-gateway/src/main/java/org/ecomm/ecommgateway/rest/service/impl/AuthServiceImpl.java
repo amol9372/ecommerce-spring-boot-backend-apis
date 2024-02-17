@@ -8,6 +8,7 @@ import org.ecomm.ecommgateway.persistence.entity.UserCredentials;
 import org.ecomm.ecommgateway.persistence.entity.UserRole;
 import org.ecomm.ecommgateway.persistence.entity.UserStatus;
 import org.ecomm.ecommgateway.persistence.repository.UserCredentialsRepository;
+import org.ecomm.ecommgateway.rest.controller.PostsWebSocketHandler;
 import org.ecomm.ecommgateway.rest.model.AuthResponse;
 import org.ecomm.ecommgateway.rest.model.LoginUserRequest;
 import org.ecomm.ecommgateway.rest.model.RegisterUserRequest;
@@ -36,6 +37,9 @@ public class AuthServiceImpl implements AuthService {
 
   @Autowired PasswordEncoder passwordEncoder;
 
+  @Autowired
+  PostsWebSocketHandler postsWebSocketHandler;
+
   @Override
   public Mono<AuthResponse> authenticate(LoginUserRequest request) {
 
@@ -48,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
         .map(
             authentication -> {
               var user = userCredentialsRepository.findByEmail(request.getEmail()).orElseThrow();
+
               return AuthResponse.builder()
                   .token(jwsUtil.generateToken(user))
                   .userInfo(
@@ -56,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
                           .email(user.getEmail())
                           .nickName(user.getFirstName())
                           .name(user.getEmail())
+                              .role(user.getRole().getRole().name())
                           .build())
                   .build();
             });
