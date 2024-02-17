@@ -3,7 +3,7 @@
 Ecommerce website based on microservices architecture in spring boot 3
 
 - This project contains backend APIs for ecommerce with different microservices
-- It contains all the functionalities like product inventory, variance, cart, checkout etc
+- It contains all the functionalities like product inventory, variance, cart, checkout, websockets etc
 - All the APIs are constructed with Spring boot 3
 
 ## Application architecture
@@ -13,6 +13,13 @@ Ecommerce website based on microservices architecture in spring boot 3
 ## Postman collection (Public)
 ```
 https://www.postman.com/galactic-eclipse-361945/workspace/public-9372/collection/1877749-6742d038-c937-4aac-838e-7e30ff85865d?action=share&creator=1877749
+```
+## Server Events (ADMIN user only)
+
+In Postman use the below url to recieve server side events
+
+```curl
+ws://localhost:8091/ws/events
 ```
 
 ## Features
@@ -24,6 +31,7 @@ https://www.postman.com/galactic-eclipse-361945/workspace/public-9372/collection
 - Feature template
 - Shopping cart
 - Checkout page
+- Server Events page
 
 ## Tech stack
 
